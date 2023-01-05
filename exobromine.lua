@@ -11,13 +11,15 @@ function BDR(...)
   poke(16320,...)
 end
 function TIC()
-  -- Alien scrolling background
-  for x = 0, 239 do
-    for y = 0, 135 do
-      -- Moving alien texture with tunnel perspective
-      pix(x, y, (x ~ (y/68-1)*(2-(x/135-1)^2)^2//.1 + t) % 5 // 4*14)
-    end
+  -- Audio
+  poke(65437,-15)
+  v=time()<<4
+  for i=0,31 do
+    poke4(130876+i, v >> 7 | (v >> 7) * v >> 5)
+    v=v+1
   end
+  
+  cls()
     
   -- Voxel metaballs
   for z = -7, 7 do
