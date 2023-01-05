@@ -12,7 +12,9 @@ function BDR(...)
 end
 function TIC()
   -- Audio
-  poke(65437,-15)
+  poke(65437,
+    -15 --| 241
+  )
   v=time()<<4
   for i=0,31 do
     poke4(130876+i, v >> 7 | (v >> 7) * v >> 5)
@@ -29,21 +31,21 @@ function TIC()
         i=7
         u1=z+4*s(t/i) i=i+2
         v1=z+4*s(t/i) i=i+2
-        w1=z+4*s(t/i) i=i+2
+        --w1=z+4*s(t/i) i=i+2
         u2=y+4*s(t/i) i=i+2
-        v2=y+4*s(t/i) i=i+2
+        --v2=y+4*s(t/i) i=i+2
         w2=y+4*s(t/i) i=i+2
-        u3=x+4*s(t/i) i=i+2
+        --u3=x+4*s(t/i) i=i+2
         v3=x+4*s(t/i) i=i+2
         w3=x+4*s(t/i)
-        if 1/(v1^2+v2^2+v3^2)+1/(w1^2+w2^2+w3^2)+1/(u1^2+u2^2+u3^2)>.1 then
+        if 1/(v1^2+y^2+v3^2)+1/(z^2+w2^2+w3^2)+1/(u1^2+u2^2+x^2)>.1 then
           -- Draw a voxel ball
           --{
           a=4*(30+x-y)
           b=(2*(x-2*z+y)+t)%239
           --}
           circ(a,b,4,2)
-          circb(a,b,4,0)
+          circb(a,b,4,1)
           circ(a,b+2,2,3)
         end
       end
@@ -54,7 +56,7 @@ end
 t = 0
 --}
 
--- Greets scroller, excluded from 256 byte entry
+-- Scroller, excluded from 256 byte entry
 -- OVR=load'txt={"Exobromine","by GoingDigital 2023","","Made with love in Lowestoft, UK","for Lovebyte 2023","","My first attempt at a scene.","Voxel metaballs, colour graduation,","perspective and xor textures in 256 bytes.","","Packed by pakettic.","","Thanks to","aldroid blackle dave84 djh0ffman","evvvvil ferris flopine gasman","HellMood iq mantatronic pestis","psenough superogue ToBach","for support, encouragement,","tools, articles and streams"}z=t//2%400-150 for i=1,#txt do w=print(txt[i],0,-9)print(txt[i],120-w//2+1,i*10-z+1,10)print(txt[i],120-w//2,i*10-z,12)end'
 
 -- TIC-80 default ancilliary data
