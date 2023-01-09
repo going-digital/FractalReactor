@@ -2,62 +2,75 @@
 -- A 256 byte demo by Going Digital, for release at Lovebyte 2023
 -- DO NOT RELEASE
 --
--- Compress with pakettic -z5 -alahc
+-- 234 bytes, 22 bytes remaining
+--
+-- Compress with pakettic -z3 -alahc
 --
 --{
-s=math.sin
 function BDR(...)
+  --{
   -- Background gradient
-  poke(16320,...)
+  poke(16322, ...*...)
+  -- Hide mouse cursor
+  poke(16379, 1)
+  --}
 end
+
 function TIC()
   -- Audio
-  poke(65437,
-    -15 --| 241
-  )
+  -- Set volume to 15 (full) and pitch to 0x100
+  poke(65437,241)
+  -- Bytebeat based on time().
+  -- time() is not synchronised to TIC-80 frames, which gives a pseudo-random
+  -- kick drum beat.
+  -- The multiplying by v gives the rising/falling tone.
   v=time()<<4
   for i=0,31 do
     poke4(130876+i, v >> 7 | (v >> 7) * v >> 5)
     v=v+1
   end
-  
-  cls()
-    
-  -- Voxel metaballs
-  for z = -7, 7 do
-    for y = -7, 7 do
-      for x = -7, 7 do
-        -- Metaballs, using lots of deliberately repetitive code to make more compressible.
-        i=7
-        u1=z+4*s(t/i) i=i+2
-        v1=z+4*s(t/i) i=i+2
-        --w1=z+4*s(t/i) i=i+2
-        u2=y+4*s(t/i) i=i+2
-        --v2=y+4*s(t/i) i=i+2
-        w2=y+4*s(t/i) i=i+2
-        --u3=x+4*s(t/i) i=i+2
-        v3=x+4*s(t/i) i=i+2
-        w3=x+4*s(t/i)
-        if 1/(v1^2+y^2+v3^2)+1/(z^2+w2^2+w3^2)+1/(u1^2+u2^2+x^2)>.1 then
-          -- Draw a voxel ball
-          --{
-          a=4*(30+x-y)
-          b=(2*(x-2*z+y)+t)%239
-          --}
-          circ(a,b,4,2)
-          circb(a,b,4,1)
-          circ(a,b+2,2,3)
-        end
-      end
+
+  -- Video
+  if (time()>>13)%2<1 then cls() end
+
+  -- Rotating tetrix
+  -- https://mathworld.wolfram.com/Tetrix.html
+  -- 
+  for x=-31,31 do
+    for y=-31,31 do
+      -- Tetrix mapping in z axis
+      -- Tetrix is a 3D analogue of a Sierpinski triangle, as a tetrahedron.
+      -- https://mathworld.wolfram.com/Tetrix.html
+      -- For a power of 2 dimension, each x/y position has 1 corresponding z
+      -- position, which is z=x xor y. That makes it great for sizecoding!
+      z=x~y
+      -- Rotation about x/y
+      x1=x*cos1+y*sin1
+      y1=y*cos1-x*sin1
+      -- Rotate about y1/z
+      x2=x1*cos2+z*sin2
+      z2=z*cos2-x1*sin2
+      scale=90/(90+z2)
+      -- Plot points
+      pix(120+x2*(2+sin2)*scale,68+y1*(2+sin2)*scale,3+pix(120+x2,68+y1))
     end
   end
-  t = t + 1
+  --{
+  -- These are digital oscillators, in modified coupled form.
+  -- https://ccrma.stanford.edu/~jos/pasp/Digital_Sinusoid_Generators.html
+  -- Doing it this way saves having to involk math.sin/cos and its faster too.
+  sin1=sin1+cos1/99
+  cos1=cos1-sin1/99
+  sin2=sin2+cos2/89
+  cos2=cos2-sin2/89
+  --}
 end
-t = 0
+sin1=0 cos1=1
+sin2=0 cos2=1
 --}
 
 -- Scroller, excluded from 256 byte entry
--- OVR=load'txt={"Exobromine","by GoingDigital 2023","","Made with love in Lowestoft, UK","for Lovebyte 2023","","My first attempt at a scene.","Voxel metaballs, colour graduation,","perspective and xor textures in 256 bytes.","","Packed by pakettic.","","Thanks to","aldroid blackle dave84 djh0ffman","evvvvil ferris flopine gasman","HellMood iq mantatronic pestis","psenough superogue ToBach","for support, encouragement,","tools, articles and streams"}z=t//2%400-150 for i=1,#txt do w=print(txt[i],0,-9)print(txt[i],120-w//2+1,i*10-z+1,10)print(txt[i],120-w//2,i*10-z,12)end'
+--t=0OVR=load't=t+.5txt={"Exobromine","by GoingDigital 2023","","Made with love in Lowestoft, UK","for Lovebyte 2023","","My first attempt at a scene.","Voxel metaballs, colour graduation,","perspective and xor textures in 256 bytes.","","Packed by pakettic.","","Thanks to","aldroid blackle dave84 djh0ffman","evvvvil ferris flopine gasman","HellMood iq mantatronic pestis","psenough superogue ToBach","for support, encouragement,","tools, articles and streams"}z=t//2%400-150 for i=1,#txt do w=print(txt[i],0,-9)print(txt[i],120-w//2+1,i*10-z+1,10)print(txt[i],120-w//2,i*10-z,12)end'
 
 -- TIC-80 default ancilliary data
 -- <TILES>
