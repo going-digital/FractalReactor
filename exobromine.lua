@@ -2,15 +2,16 @@
 -- A 256 byte demo by Going Digital, for release at Lovebyte 2023
 -- DO NOT RELEASE
 --
--- 234 bytes, 22 bytes remaining
+-- 239 bytes, 17 bytes remaining
 --
--- Compress with pakettic -z3 -alahc
+-- Compress with pakettic -z5 -alahc : 240 bytes
+-- Compress with pakettic -z3 -alahc : 239 bytes
 --
 --{
 function BDR(...)
   --{
   -- Background gradient
-  poke(16322, ...*...)
+  poke(16325, ...*...)
   -- Hide mouse cursor
   poke(16379, 1)
   --}
@@ -31,7 +32,11 @@ function TIC()
   end
 
   -- Video
-  if (time()>>13)%2<1 then cls() end
+  if (time()>>13)%2<1 then
+    cls(1)
+  else
+    rect(0,v%241,241,1,1)
+  end
 
   -- Rotating tetrix
   -- https://mathworld.wolfram.com/Tetrix.html
@@ -49,10 +54,10 @@ function TIC()
       y1=y*cos1-x*sin1
       -- Rotate about y1/z
       x2=x1*cos2+z*sin2
-      z2=z*cos2-x1*sin2
-      scale=90/(90+z2)
+      -- Perspective and pulsing
+      scale=(2+sin2)*80/(120+z*cos2-x1*sin2)
       -- Plot points
-      pix(120+x2*(2+sin2)*scale,68+y1*(2+sin2)*scale,3+pix(120+x2,68+y1))
+      pix(120+x2*scale,68+y1*scale,1+pix(120+x2,68+y1))
     end
   end
   --{
@@ -61,12 +66,13 @@ function TIC()
   -- Doing it this way saves having to involk math.sin/cos and its faster too.
   sin1=sin1+cos1/99
   cos1=cos1-sin1/99
-  sin2=sin2+cos2/89
-  cos2=cos2-sin2/89
+  sin2=sin2+cos2/79
+  cos2=cos2-sin2/79
   --}
 end
 sin1=0 cos1=1
 sin2=0 cos2=1
+
 --}
 
 -- Scroller, excluded from 256 byte entry
