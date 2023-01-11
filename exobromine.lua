@@ -18,9 +18,10 @@ function BDR(...)
 end
 
 function TIC()
+  tm=time()
   --
-  acc=(time()>>7)&2
-  if (time()>>13)%2<1 then
+  acc=(tm>>7)&2
+  if (tm>>13)%2<1 then
     acc=1
     cls(acc)
   end
@@ -33,7 +34,7 @@ function TIC()
   -- time() is not synchronised to TIC-80 frames, which gives a pseudo-random
   -- kick drum beat.
   -- The multiplying by v gives the rising/falling tone.
-  v=time()<<4
+  v=tm<<4
   for i=0,31 do
     poke4(130876+i, v >> 7 | (v >> 7) * v >> 5)
     v=v+1
