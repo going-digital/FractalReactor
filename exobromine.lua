@@ -18,6 +18,14 @@ function BDR(...)
 end
 
 function TIC()
+  --
+  acc=(time()>>7)&2
+  if (time()>>13)%2<1 then
+    acc=1
+    cls(acc)
+  end
+
+
   -- Audio
   -- Set volume to 15 (full) and pitch to 0x100
   poke(65437,241)
@@ -32,11 +40,6 @@ function TIC()
   end
 
   -- Video
-  if (time()>>13)%2<1 then
-    cls(1)
-  else
-    rect(0,v%241,241,1,1)
-  end
 
   -- Rotating tetrix
   -- https://mathworld.wolfram.com/Tetrix.html
@@ -57,13 +60,14 @@ function TIC()
       -- Perspective and pulsing
       scale=(2+sin2)*80/(120+z*cos2-x1*sin2)
       -- Plot points
-      pix(120+x2*scale,68+y1*scale,1+pix(120+x2,68+y1))
+      pix(
+        120+x2*scale,68+y1*scale,1+acc*pix(120+x2,68+y1))
     end
   end
   --{
   -- These are digital oscillators, in modified coupled form.
   -- https://ccrma.stanford.edu/~jos/pasp/Digital_Sinusoid_Generators.html
-  -- Doing it this way saves having to involk math.sin/cos and its faster too.
+  -- Doing it this way saves having to invoke math.sin/cos and its faster too.
   sin1=sin1+cos1/99
   cos1=cos1-sin1/99
   sin2=sin2+cos2/79
