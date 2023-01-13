@@ -1,11 +1,5 @@
 -- Exobromine for TIC-80
--- A 256 byte demo by Going Digital, for release at Lovebyte 2023
--- DO NOT RELEASE
---
--- 239 bytes, 17 bytes remaining
---
--- Compress with pakettic -z5 -alahc : 240 bytes
--- Compress with pakettic -z3 -alahc : 239 bytes
+-- A 256 byte demo by Going Digital, for Lovebyte 2023
 --
 --{
 function BDR(...)
@@ -20,12 +14,7 @@ end
 function TIC()
   tm=time()
   --
-  acc=(tm>>7)&2
-  if (tm>>13)%2<1 then
-    acc=1
-    cls(acc)
-  end
-
+  cls(1)
 
   -- Audio
   -- Set volume to 15 (full) and pitch to 0x100
@@ -45,6 +34,7 @@ function TIC()
   -- Rotating tetrix
   -- https://mathworld.wolfram.com/Tetrix.html
   -- 
+  -- Render shadow first
   for x=-31,31 do
     for y=-31,31 do
       -- Tetrix mapping in z axis
@@ -56,13 +46,41 @@ function TIC()
       -- Rotation about x/y
       x1=x*cos1+y*sin1
       y1=y*cos1-x*sin1
-      -- Rotate about y1/z
+      -- Rotate about x1/z
       x2=x1*cos2+z*sin2
+      z2=z*cos2-x1*sin2
       -- Perspective and pulsing
       scale=(2+sin2)*80/(120+z*cos2-x1*sin2)
       -- Plot points
       pix(
-        120+x2*scale,68+y1*scale,1+acc*pix(120+x2,68+y1))
+        120 + x2 * scale, 68 - (z2/3-30) * scale,
+        0
+      )
+    end
+  end
+  -- Render object. This uses a copy and paste of above code to ensure
+  -- it packs well.
+  for x=-31,31 do
+    for y=-31,31 do
+      -- Tetrix mapping in z axis
+      -- Tetrix is a 3D analogue of a Sierpinski triangle, as a tetrahedron.
+      -- https://mathworld.wolfram.com/Tetrix.html
+      -- For a power of 2 dimension, each x/y position has 1 corresponding z
+      -- position, which is z=x xor y. That makes it great for sizecoding!
+      z=x~y
+      -- Rotation about x/y
+      x1=x*cos1+y*sin1
+      y1=y*cos1-x*sin1
+      -- Rotate about x1/z
+      x2=x1*cos2+z*sin2
+      z2=z*cos2-x1*sin2
+      -- Perspective and pulsing
+      scale=(2+sin2)*80/(120+z*cos2-x1*sin2)
+      -- Plot points
+      pix(
+        120 + x2 * scale, 68 + y1 * scale,
+        1 + pix(120 + x2 * scale, 68 + y1 * scale)
+      )
     end
   end
   --{
@@ -79,9 +97,6 @@ sin1=0 cos1=1
 sin2=0 cos2=1
 
 --}
-
--- Scroller, excluded from 256 byte entry
---t=0OVR=load't=t+.5txt={"Exobromine","by GoingDigital 2023","","Made with love in Lowestoft, UK","for Lovebyte 2023","","My first attempt at a scene.","Voxel metaballs, colour graduation,","perspective and xor textures in 256 bytes.","","Packed by pakettic.","","Thanks to","aldroid blackle dave84 djh0ffman","evvvvil ferris flopine gasman","HellMood iq mantatronic pestis","psenough superogue ToBach","for support, encouragement,","tools, articles and streams"}z=t//2%400-150 for i=1,#txt do w=print(txt[i],0,-9)print(txt[i],120-w//2+1,i*10-z+1,10)print(txt[i],120-w//2,i*10-z,12)end'
 
 -- TIC-80 default ancilliary data
 -- <TILES>
