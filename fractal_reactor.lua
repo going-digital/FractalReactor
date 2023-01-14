@@ -1,4 +1,4 @@
--- Exobromine for TIC-80
+-- Fractal reactor for TIC-80
 -- A 256 byte demo by Going Digital, for Lovebyte 2023
 --
 --{
